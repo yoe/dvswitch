@@ -81,12 +81,12 @@ mixer_window::mixer_window(mixer & mixer)
       effects_frame_(gettext("Effects")),
       none_button_(effect_group_, gettext("No effect/transition")),
       pip_button_(effect_group_, gettext("_Pic-in-pic"), true),
-      mfade_button_(effect_group_, gettext("_Manual fade"), true),
+      /*mfade_button_(effect_group_, gettext("_Manual fade"), true),*/
       tfade_button_(effect_group_, gettext("Timed fa_de"), true),
       tfade_label_(gettext("Transition speed [ms]:")),
       tfade_value_(40, 15040, 40),
-      mfade_label_(gettext("Manual fade A/B:")),
-      mfade_ab_(0, 256, 1),
+      /*mfade_label_(gettext("Manual fade A/B:")),*/
+      /*mfade_ab_(0, 256, 1),*/
       apply_button_(),
       apply_icon_(Gtk::Stock::APPLY, Gtk::ICON_SIZE_BUTTON),
       trans_frame_(gettext("Transitions")),
@@ -95,7 +95,7 @@ mixer_window::mixer_window(mixer & mixer)
       sec_video_source_id_(0),
       pip_active_(false),
       pip_pending_(false),
-      mfade_active_(false),
+      /*mfade_active_(false),*/
       progress_active_(false),
       fullscreen_state_(false),
       wakeup_pipe_(O_NONBLOCK, O_NONBLOCK),
@@ -205,11 +205,11 @@ mixer_window::mixer_window(mixer & mixer)
 	sigc::mem_fun(this, &mixer_window::begin_pic_in_pic));
     pip_button_.show();
 
-    mfade_button_.set_mode(/*draw_indicator=*/false);
-    mfade_button_.set_sensitive(false);
-    mfade_button_.signal_clicked().connect(
-    	sigc::mem_fun(this, &mixer_window::begin_mfade));
-    mfade_button_.show();
+    //mfade_button_.set_mode(/*draw_indicator=*/false);
+    //mfade_button_.set_sensitive(false);
+    //mfade_button_.signal_clicked().connect(
+    	//sigc::mem_fun(this, &mixer_window::begin_mfade));
+    //mfade_button_.show();
 
     tfade_button_.set_mode(/*draw_indicator=*/false);
     tfade_button_.set_sensitive(false);
@@ -229,14 +229,14 @@ mixer_window::mixer_window(mixer & mixer)
     tfade_value_.show();
     tfade_label_.show();
 
-    mfade_ab_.set_value(0);
-    mfade_ab_.set_draw_value(false);
-    mfade_ab_.set_sensitive(false);
-    mfade_ab_.show();
-    mfade_label_.show();
+    //mfade_ab_.set_value(0);
+    //mfade_ab_.set_draw_value(false);
+    //mfade_ab_.set_sensitive(false);
+    //mfade_ab_.show();
+    //mfade_label_.show();
 
-    mfade_ab_.signal_value_changed().connect(
-	sigc::mem_fun(this, &mixer_window::mfade_update));
+    //mfade_ab_.signal_value_changed().connect(
+	//sigc::mem_fun(this, &mixer_window::mfade_update));
 
     apply_button_.set_sensitive(false);
     apply_button_.signal_clicked().connect(
@@ -278,9 +278,9 @@ mixer_window::mixer_window(mixer & mixer)
     effects_box_.set_spacing(gui_standard_spacing);
     effects_box_.pack_start(apply_button_, Gtk::PACK_SHRINK);
     effects_box_.pack_start(pip_button_, Gtk::PACK_SHRINK);
-    effects_box_.pack_start(mfade_button_, Gtk::PACK_SHRINK);
-    effects_box_.pack_start(mfade_label_, Gtk::PACK_SHRINK);
-    effects_box_.pack_start(mfade_ab_, Gtk::PACK_SHRINK);
+    //effects_box_.pack_start(mfade_button_, Gtk::PACK_SHRINK);
+    //effects_box_.pack_start(mfade_label_, Gtk::PACK_SHRINK);
+    //effects_box_.pack_start(mfade_ab_, Gtk::PACK_SHRINK);
     effects_box_.show();
     effects_frame_.add(effects_box_);
     effects_frame_.show();
@@ -334,8 +334,8 @@ void mixer_window::init_osc_connection(OSC * osc)
     osc_->signal_audio_selected().connect(
 	sigc::mem_fun(selector_, &dv_selector_widget::select_snd));
 
-    osc_->signal_mfade_set().connect(
-	sigc::mem_fun(*this, &mixer_window::mfade_set));
+    //osc_->signal_mfade_set().connect(
+	//sigc::mem_fun(*this, &mixer_window::mfade_set));
     osc_->signal_tfade_set().connect(
 	sigc::mem_fun(*this, &mixer_window::tfade_set));
 
@@ -362,14 +362,14 @@ void mixer_window::rec_stop()
     toggle_record();
 }
 
-void mixer_window::mfade_set(int val)
+void mixer_window::mfade_set(int)
 {
     if (!allow_mfade_) {
 	return;
     }
-    mfade_button_.set_active(allow_mfade_);
-    mfade_ab_.set_value(val);
-    mfade_update();
+    //mfade_button_.set_active(allow_mfade_);
+    //mfade_ab_.set_value(val);
+    //mfade_update();
 }
 
 void mixer_window::tfade_set(int val)
@@ -382,7 +382,7 @@ void mixer_window::tfade_set(int val)
     }
     tfade_button_.set_active(true);
     tfade_value_.set_value(val);
-    begin_mfade();
+    //begin_mfade();
 }
 
 void mixer_window::cancel_effect()
@@ -432,7 +432,7 @@ void mixer_window::begin_mfade()
 	apply_button_.set_sensitive(false);
     }
     pip_active_ = false;
-    mfade_mix();
+    //mfade_mix();
 }
 
 void mixer_window::effect_status(int min, int cur, int max, bool more)
@@ -560,7 +560,7 @@ void mixer_window::set_pri_video_source(mixer::source_id id)
         allow_mfade_ = true;
     }
 
-    mfade_mix();
+    //mfade_mix();
 
     // If the fade is active, apply the transition rather than switching the
     // primary source.
@@ -618,7 +618,7 @@ void mixer_window::set_sec_video_source(mixer::source_id id)
 	    none_button_.set_active();
 	}
     }
-    mfade_mix();
+    //mfade_mix();
 }
 
 void mixer_window::mfade_mix()
@@ -633,7 +633,8 @@ void mixer_window::mfade_mix()
 
     if (sec_video_source_id_ != pri_video_source_id_)
     {
-	int fade = mfade_ab_.get_value();
+	//int fade = mfade_ab_.get_value();
+	int fade=0;
 	if (fade < 1)
 	{
 	    mixer_.set_video_mix(mixer_.create_video_mix_simple(pri_video_source_id_));
@@ -657,7 +658,7 @@ void mixer_window::mfade_update()
 {
     if (mfade_active_)
     {
-	mfade_mix();
+	//mfade_mix();
     }
 }
 
@@ -724,7 +725,7 @@ bool mixer_window::update(Glib::IOCondition) throw()
 	none_button_.set_sensitive(count >= 1);
 	pip_button_.set_sensitive(count >= 2);
 	tfade_button_.set_sensitive(count >= 2);
-	mfade_button_.set_sensitive((count >= 2) && allow_mfade_);
+	//mfade_button_.set_sensitive((count >= 2) && allow_mfade_);
 
 	source_count_ = count;
 
