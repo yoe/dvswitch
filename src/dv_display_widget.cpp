@@ -102,7 +102,7 @@ dv_display_widget::dv_display_widget(int scale)
     AVCodecContext * decoder = decoder_.get();
     if (!decoder)
 	throw std::bad_alloc();
-    auto_codec_open_decoder(decoder_, CODEC_ID_DVVIDEO);
+    auto_codec_open_decoder(decoder_, AV_CODEC_ID_DVVIDEO);
     decoder->opaque = this;
     decoder->get_buffer = get_buffer;
     decoder->release_buffer = release_buffer;
